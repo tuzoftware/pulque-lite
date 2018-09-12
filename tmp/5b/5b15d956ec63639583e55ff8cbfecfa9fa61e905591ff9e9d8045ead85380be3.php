@@ -28,6 +28,10 @@ class __TwigTemplate_c171798ca733b44bd71b185d2dbd8a5e7e43e96c19c745c907174b25b74
         // line 5
         echo twig_escape_filter($this->env, ($context["hello"] ?? null), "html", null, true);
         echo "
+";
+        // line 6
+        echo twig_escape_filter($this->env, call_user_func_array($this->env->getFunction('session')->getCallable(), array("usuario")), "html", null, true);
+        echo "
 </body>
 </html>";
     }
@@ -44,7 +48,7 @@ class __TwigTemplate_c171798ca733b44bd71b185d2dbd8a5e7e43e96c19c745c907174b25b74
 
     public function getDebugInfo()
     {
-        return array (  29 => 5,  23 => 1,);
+        return array (  33 => 6,  29 => 5,  23 => 1,);
     }
 
     public function getSourceContext()
@@ -54,7 +58,8 @@ class __TwigTemplate_c171798ca733b44bd71b185d2dbd8a5e7e43e96c19c745c907174b25b74
 </head>
 <body>
 [[hello]]
+[[ session('usuario') ]]
 </body>
-</html>", "hello-world.html", "C:\\xampp\\htdocs\\fatfree-master\\ui\\modules\\hello\\hello-world.html");
+</html>", "hello-world.html", "C:\\wamp\\www\\pulque-lite\\ui\\modules\\hello\\hello-world.html");
     }
 }

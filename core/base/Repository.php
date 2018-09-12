@@ -9,20 +9,21 @@
 class Repository
 {
     protected $db;
-    protected $filtros;
+    protected $filters;
     protected $sql;
 
     public function __construct($db='DB')
     {
-        $this->db =F3::get($db);
-        $this->filtros=array();
+        $f3 = \Base::instance();
+        $this->db =$f3->get($db);
+        $this->filters=array();
     }
 
-    public function obtenerInstanciaBD(){
+    public function getInstanceBD(){
         return $this->db;
     }
 
-    public function beginTransacction(){
+    public function beginTransaction(){
         $this->db->begin();
     }
 
@@ -34,163 +35,149 @@ class Repository
         $this->db->rollback();
     }
 
-    public function obtenerInstancia($nombre_tabla){
-        return new DB\SQL\Mapper($this->db,$nombre_tabla);
+    public function getInstance($tableName){
+        return new DB\SQL\Mapper($this->db,$tableName);
     }
 
-    public function obtenerInstanciaIdValor($nombre_tabla,$id,$valor){
-        $objeto=new DB\SQL\Mapper($this->db,$nombre_tabla);
-        $objeto->load(array($id.'=?',$valor));
-        return $objeto;
+    public function getInstanceIdValue($tableName, $idName, $value){
+        $object=new DB\SQL\Mapper($this->db,$tableName);
+        $object->load(array($idName.'=?',$value));
+        return $object;
     }
 
-    public function obtenerCampoValor($nombre_tabla,$campo,$valor,$key){
-        $objeto=new DB\SQL\Mapper($this->db,$nombre_tabla);
-        $objeto->load(array($campo.'=?',$valor));
-        return $objeto[$key];
+    public function getFieldByFieldValue($tableName, $fieldName, $value, $fieldNameToReturn){
+        $object=new DB\SQL\Mapper($this->db,$tableName);
+        $object->load(array($fieldName.'=?',$value));
+        return $object[$fieldNameToReturn];
     }
 
-    public function eliminarInstanciaIdValor($nombre_tabla,$id,$valor){
-            $objeto=new DB\SQL\Mapper($this->db,$nombre_tabla);
-            $objeto->load(array($id.'=?',$valor));
-            $objeto->erase();
+    public function deleteInstanceByIdValue($tableName, $idName, $value){
+        $object=new DB\SQL\Mapper($this->db,$tableName);
+        $object->load(array($idName.'=?',$value));
+        $object->erase();
     }
 
-    public function existeValor($nombreTabla, $nombreIdForanea,$valorForanea, $nombreCampo, $valor){
-        $tabla=new DB\SQL\Mapper($this->db,$nombreTabla);
-        $filtro=array("$nombreIdForanea=? AND $nombreCampo=?",$valorForanea,$valor);
-        $tabla->load($filtro);
-        $existe=false;
-        if(empty($tabla[$nombreIdForanea])){
-            $existe=false;
+    public function existOnlyValue($tableName, $fieldName, $fieldValue){
+        $table=new DB\SQL\Mapper($this->db,$tableName);
+        $filter=array("$fieldName=?",$fieldValue);
+        $table->load($filter);
+        if(empty($table[$fieldName])){
+            $exist=false;
         }else{
-            $existe=true;
+            $exist=true;
         }
-        return $existe;
+        return $exist;
     }
 
-    public function existeId($nombre_tabla,$id,$valor){
-        $objeto=new DB\SQL\Mapper($this->db,$nombre_tabla);
-        $objeto->load(array($id.'=?',$valor));
-        $existe=false;
-        if(!empty($objeto[$id])){
-            $existe=true;
-        }
-        return $existe;
-    }
-
-    public function existeGuardarEditarNombreCampo($nombre_tabla,$arreglo,$nombreCampo,$nombreId){
-        $objeto=new DB\SQL\Mapper($this->db,$nombre_tabla);
-        $existe=false;
-        if(empty($arreglo[$nombreId])){
-            $objeto->load(array($nombreCampo.'=?',$arreglo[$nombreCampo]));
+    public function existValue($tableName, $idForeignKeyName, $foreignValue, $fieldName, $value){
+        $table=new DB\SQL\Mapper($this->db,$tableName);
+        $filter=array("$idForeignKeyName=? AND $fieldName=?",$foreignValue,$value);
+        $table->load($filter);
+        if(empty($table[$idForeignKeyName])){
+            $exist=false;
         }else{
-            $objeto->load(array($nombreCampo.'=? AND '.$nombreId.'!=?',$arreglo[$nombreCampo],$arreglo[$nombreId]));
+            $exist=true;
         }
-        if(!empty($objeto[$nombreId])){
-            $existe=true;
+        return $exist;
+    }
+
+    public function existId($tableName, $idName, $value){
+        $object=new DB\SQL\Mapper($this->db,$tableName);
+        $object->load(array($idName.'=?',$value));
+        $exist=false;
+        if(!empty($object[$idName])){
+            $exist=true;
         }
-        return $existe;
+        return $exist;
     }
 
-    protected function actualizacion(){
-        $resultados=array();
-        $resultados=$this->db->exec($this->sql,$this->filtros);
-        $this->filtros=array();
-        if(empty($resultados)){
-            return false;
-        }
-        return $resultados;
-    }
-
-
-    protected function resultado(){
-        $resultados=array();
-        $resultados=$this->db->exec($this->sql,$this->filtros);
-        $this->filtros=array();
-        if(empty($resultados)){
-            return false;
-        }
-        return $resultados;
-    }
-
-    protected function renglon(){
-        $resultados=$this->db->exec($this->sql,$this->filtros);
-        $this->filtros=array();
-        if(empty($resultados)){
-            return false;
-        }
-        return $resultados[0];
-    }
-
-    protected function escalar(){
-        $resultados=$this->db->exec($this->sql,$this->filtros);
-        $this->filtros=array();
-        if(empty($resultados)){
-            return false;
-        }
-        return current($resultados[0]);
-    }
-
-    public function convertirArregloModelo($nombreTabla,$arreglo){
-        $objeto = null;
-        if($arreglo!=null || count($arreglo)!=0){
-            $objeto = new DB\SQL\Mapper($this->db,$nombreTabla);
-            foreach ($arreglo as $key => $value) {
-                $objeto->$key = $this->limpiar($value);
-            }
-        }
-        return $objeto;
-    }
-
-    public function guardar(&$arreglo,$nombre_tabla){
-        $objeto=$this->convertirArregloModelo($nombre_tabla,$arreglo);
-        $objeto->save();
-        $arreglo=$objeto;
-    }
-
-    public function actualizar(&$arreglo,$nombre_tabla,$id){
-        $objeto=$this->copiarPropiedades($arreglo,$nombre_tabla,$id);
-        $objeto->update();
-        $arreglo=$objeto;
-    }
-
-    public function guardarActualizar($arreglo,$nombre_tabla,$id){
-        $objeto=null;
-        if(empty($arreglo[$id])){
-            $objeto=$this->convertirArregloModelo($nombre_tabla,$arreglo);
-            $objeto->save();
+    public function existUpdateSaveFieldName ($tableName, $array, $fieldName, $idName){
+        $object=new DB\SQL\Mapper($this->db,$tableName);
+        $exist=false;
+        if(empty($array[$idName])){
+            $object->load(array($fieldName.'=?',$array[$fieldName]));
         }else{
-            $objeto=$this->copiarPropiedades($arreglo,$nombre_tabla,$id);
-            $objeto->update();
+            $object->load(array($fieldName.'=? AND '.$idName.'!=?',$array[$fieldName],$array[$idName]));
         }
-        return $objeto;
+        if(!empty($object[$idName])){
+            $exist=true;
+        }
+        return $exist;
     }
 
-    private function copiarPropiedades($arreglo,$nombre_tabla,$id){
-        $valor=$arreglo[$id];
-        $objetoOriginal=$this->obtenerInstanciaIdValor($nombre_tabla,$id,$valor);
-        foreach ($arreglo as $key => $value) {
-            $objetoOriginal->$key = $this->limpiar($value);
+    protected function executeSQL(){
+        $results=$this->db->exec($this->sql,$this->filters);
+        $this->filters=array();
+        if(empty($results)){
+            return false;
         }
-        return $objetoOriginal;
+        return $results;
     }
 
-    private function limpiar($valor){
-        if(is_string($valor) && F3::get('LIMPIAR')){
-            $valor=trim($valor,"");
-            switch(F3::get('CAPITALIZAR')){
-                case 1:
-                    $valor=strtoupper($valor);
-                    break;
-                case 2:
-                    $valor=strtolower($valor);
-                    break;
-                default:
-                    return $valor;
-            }
+
+    protected function result(){
+        $results=$this->db->exec($this->sql,$this->filters);
+        $this->filters=array();
+        if(empty($results)){
+            return false;
         }
-        return $valor;
+        return $results;
+    }
+
+    protected function row(){
+        $results=$this->db->exec($this->sql,$this->filters);
+        $this->filters=array();
+        if(empty($results)){
+            return false;
+        }
+        return $results[0];
+    }
+
+    protected function uniqueResult(){
+        $results=$this->db->exec($this->sql,$this->filters);
+        $this->filters=array();
+        if(empty($results)){
+            return false;
+        }
+        return current($results[0]);
+    }
+
+    public function convertArrayToModel($tableName, $array){
+        $object = null;
+        if($array!=null || count($array)!=0){
+            $object = new DB\SQL\Mapper($this->db,$tableName);
+        }
+        return $object;
+    }
+
+    public function save(&$array, $tableName){
+        $object=$this->convertArrayToModel($tableName,$array);
+        $object->save();
+        $array=$object;
+    }
+
+    public function update(&$array, $tableName, $idName){
+        $object=$this->copyProperties($array,$tableName,$idName);
+        $object->update();
+        $array=$object;
+    }
+
+    public function saveOrUpdate($array,$table_name,$idName){
+        $object=null;
+        if(empty($array[$idName])){
+            $object=$this->convertArrayToModel($table_name,$array);
+            $object->save();
+        }else{
+            $object=$this->copyProperties($array,$table_name,$idName);
+            $object->update();
+        }
+        return $object;
+    }
+
+    private function copyProperties($array, $tableName, $idName){
+        $value=$array[$idName];
+        $originalObject=$this->getInstanceIdValue($tableName,$idName,$value);
+        return $originalObject;
     }
 
 

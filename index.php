@@ -19,8 +19,8 @@ if ((float)PCRE_VERSION<7.9)
     | Archivos de configuracion
     |--------------------------------------------------------------------------
 */
-F3::config('config.ini');
-F3::config('datasource.ini');
+$f3->config('config.ini');
+$f3->config('datasource.ini');
 date_default_timezone_set('America/Mexico_City');
 
 /*
@@ -28,18 +28,18 @@ date_default_timezone_set('America/Mexico_City');
     | Configuracion de Autoload
     |--------------------------------------------------------------------------
 */
-$f3->AUTOLOAD="core/lib/Autocarga/;core/lib/F3Access/;core/base/;
-core/lib/error/;core/lib/;";
-$autocarga = new Autocarga();
-$autocarga->autocargar('app');
 
+$f3->set('AUTOLOAD',"core/lib/AutoLoad/;core/lib/F3Access/;core/base/;
+core/lib/error/;core/lib/;");
+$autoLoad = new AutoLoad();
+$autoLoad->autoLoadClasses('app');
 /*
     |--------------------------------------------------------------------------
     | Configuracion de Twig Plantillas
     |--------------------------------------------------------------------------
 */
 
-$loader = new Twig_Loader_Filesystem($autocarga->autocargarTwig('ui/modules'));
+$loader = new Twig_Loader_Filesystem($autoLoad->autoLoadTwig('ui/modules'));
 
 $twig = new Twig_Environment($loader, array(
     'cache' => 'tmp',
@@ -48,13 +48,17 @@ $twig = new Twig_Environment($loader, array(
 ));
 $filter =new Twig_Filter('f3','F3::get');
 $twig->addFilter($filter);
-$twig->addGlobal('is_ajax',F3::get('AJAX'));
-$twig->addGlobal("base", F3::get('BASE'));
-$twig->addGlobal("debug", F3::get('DEBUG'));
-$functionSeguridad = new Twig_SimpleFunction('tieneAlgunPermiso', function ($permiso) {
-    return Seguridad::tieneAlgunPermiso($permiso);
+$twig->addGlobal('is_ajax',$f3->get('AJAX'));
+$twig->addGlobal("base", $f3->get('BASE'));
+$twig->addGlobal("debug", $f3->get('DEBUG'));
+$securityFunction = new Twig_SimpleFunction('hasSomeRol', function ($rol) {
+    return Security::hasSomeRol($rol);
 });
-$twig->addFunction($functionSeguridad);
+$twig->addFunction($securityFunction);
+$sessionFunction = new Twig_SimpleFunction('session', function ($key) {
+    return $_SESSION[$key];
+});
+$twig->addFunction($sessionFunction);
 $lexer = new Twig_Lexer($twig, array(
     'tag_comment'   => array('[#', '#]'),
     'tag_block'     => array('[%', '%]'),
