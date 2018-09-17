@@ -133,7 +133,7 @@ class Repository
         return $results[0];
     }
 
-    protected function uniqueResult(){
+    protected function scalar(){
         $results=$this->db->exec($this->sql,$this->filters);
         $this->filters=array();
         if(empty($results)){
@@ -142,10 +142,14 @@ class Repository
         return current($results[0]);
     }
 
+
     public function convertArrayToModel($tableName, $array){
         $object = null;
         if($array!=null || count($array)!=0){
             $object = new DB\SQL\Mapper($this->db,$tableName);
+            foreach ($array as $key => $value) {
+                $object->$key = $value;
+            }
         }
         return $object;
     }
@@ -177,6 +181,9 @@ class Repository
     private function copyProperties($array, $tableName, $idName){
         $value=$array[$idName];
         $originalObject=$this->getInstanceIdValue($tableName,$idName,$value);
+        foreach ($array as $key => $value) {
+            $originalObject->$key = $value;
+        }
         return $originalObject;
     }
 

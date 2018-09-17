@@ -100,7 +100,7 @@ $f3->route('POST /error','ErrorController->indexJSON');
     | Conexion a la base de datos
     |--------------------------------------------------------------------------
 */
-//F3::set('DB',new DB\SQL('mysql:host='.F3::get('localhost').';port='.F3::get('port').';dbname='.F3::get('dbname') ,F3::get('user'),F3::get('password')));
+//$f3->set('DB',new DB\SQL('mysql:host='.$f3->get('localhost').';port='.$f3->get('port').';dbname='.$f3->get('dbname') ,$f3->get('user'),$f3->get('password')));
 /*
     |--------------------------------------------------------------------------
     | Valitron
