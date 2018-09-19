@@ -124,7 +124,7 @@ class Repository
         return $results;
     }
 
-    protected function row(){
+    protected function uniqueResult(){
         $results=$this->db->exec($this->sql,$this->filters);
         $this->filters=array();
         if(empty($results)){
