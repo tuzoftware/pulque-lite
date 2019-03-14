@@ -4,38 +4,42 @@ class Controller
 {
      private $twig;
      protected $f3;
-     protected $response;
+     private $responseArray;
 	 protected $data;
 
 
-	 public function __construct()
-     {
+	 public function __construct(){
          $this->f3 = \Base::instance();
          $this->twig = $GLOBALS['twig'];//global $twig;
-         $this->response=array();
+         $this->responseArray=array();
      }
 
-     public function render($nameHtmlFile){
-            echo $this->twig->render($nameHtmlFile,$this->response);
+    protected function render($nameHtmlFile){
+            echo $this->twig->render($nameHtmlFile,$this->responseArray);
+            exit;
      }
 
-      public function urlParameterName($parameterName){
+    protected function urlParameterName($parameterName){
         return $this->f3->get("PARAMS.".$parameterName);
       }
 
-      public function post($parameterName){
+    protected function post($parameterName){
         return $this->f3->get("POST.".$parameterName);
       }
 
-      public function get($parameterName){
+    protected function get($parameterName){
         return $this->f3->get("GET.".$parameterName);
       }
 
-      public function base(){
+    protected function base(){
           return $this->f3->get('BASE');
-      }
-   
-      public function afterRoute(){
+	 }
+
+     protected function response($key,$object){
+	     $this->responseArray[$key]=$object;
+     }
+
+    public function afterRoute(){
         if ($this->f3->get('EXTEND_TIME') && $this->f3->get('SESSION.id_user')) {
             $this->f3->set('SESSION.time', time());
         }

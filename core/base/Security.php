@@ -6,7 +6,7 @@ class Security
      * @param $roles
      * @return bool
      */
-    static function hasSomeRol($roles)
+    static function hasAnyRol($roles)
     {
         $f3 = \Base::instance();
         if (is_array($roles) && is_array($f3->get('SESSION.roles'))) {

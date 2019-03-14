@@ -3,7 +3,7 @@
 /**
  * Created by PhpStorm.
  * User: Solutions
- * Date: 12/12/2016
+ * Date: 12/12/2019
  * Time: 06:09 PM
  */
 class ValidadorUtil{
@@ -111,14 +111,14 @@ class ValidadorUtil{
     public function validarEnumKey($campo,$clase){
         if(!EnumUtil::buscarKey($clase,$this->arreglo[$campo])){
             $mensajes=array($campo=>"Valor no valido");
-            MensajeRespuesta::mensajesErrores($mensajes);
+            ResponseMessage::errorMessages($mensajes);
         }
     }
 
     public function validarEnumValue($campo,$clase){
         if(!EnumUtil::buscarValue($clase,$this->arreglo[$campo])){
             $mensajes=array($campo=>array("Valor no valido"));
-            MensajeRespuesta::mensajesErrores($mensajes);
+            ResponseMessage::errorMessages($mensajes);
         }
     }
 

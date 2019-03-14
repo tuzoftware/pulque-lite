@@ -23,7 +23,7 @@ class ValidadorArchivo
           $mensajes[$name][]="Extension o Tipo de Archivo Invalido";
       }
       if($tieneErrores){
-            MensajeRespuesta::mensajes($mensajes,"ERROR");
+            ResponseMessage::messages($mensajes,"ERROR");
       }
    }
 }
