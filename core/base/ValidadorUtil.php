@@ -8,12 +8,12 @@
  */
 class ValidadorUtil{
 
-    private $validador;
-    private $arreglo;
+    private $validator;
+    private $array;
 
-    public function __construct($arreglo){
-        $this->arreglo=$arreglo;
-        $this->validador=new Valitron\Validator($arreglo);
+    public function __construct($array){
+        $this->array=$array;
+        $this->validator=new Valitron\Validator($array);
         Valitron\Validator::addRule('antes', function($field, $value,$params) {
             //Las fechas deben ya venir en formato string
             $fechaUno=DateTime::createFromFormat($params[1], $value);
@@ -41,97 +41,97 @@ class ValidadorUtil{
     }
 
 
-    public function validarFecha($campo,$requerido,$fechaMinima,$fechaMaxima,$formato='Y-m-d'){
-        $this->validarRequerido($campo,$requerido);
-        $this->validador->rule('date',$campo);
-        $this->validador->rule('dateFormat', $campo, $formato);
-        $this->validador->rule('antes',$campo,$fechaMaxima,$formato);
-        $this->validador->rule('despues',$campo,$fechaMinima,$formato);
+    public function validateFecha($campo,$requerido,$fechaMinima,$fechaMaxima,$formato='Y-m-d'){
+        $this->validateRequired($campo,$requerido);
+        $this->validator->rule('date',$campo);
+        $this->validator->rule('dateFormat', $campo, $formato);
+        $this->validator->rule('antes',$campo,$fechaMaxima,$formato);
+        $this->validator->rule('despues',$campo,$fechaMinima,$formato);
     }
-    public function validarTexto($campo,$requerido,$longitudMinima,$longitudMaxima,$expresionRegular=''){
-        $this->validarRequerido($campo,$requerido);
-        $this->validador->rule('lengthBetween',$campo, $longitudMinima,$longitudMaxima);
+    public function validateText($campo, $requerido, $longitudMinima, $longitudMaxima, $expresionRegular=''){
+        $this->validateRequired($campo,$requerido);
+        $this->validator->rule('lengthBetween',$campo, $longitudMinima,$longitudMaxima);
         if(!empty($expresionRegular)){
-            $this->validador->rule('regex',$campo,$expresionRegular);
+            $this->validator->rule('regex',$campo,$expresionRegular);
         }
     }
 
-    public function validarAlfa($campo,$requerido,$longitudMinima,$longitudMaxima){
-        $this->validarRequerido($campo,$requerido);
-        $this->validador->rule('lengthBetween',$campo, $longitudMinima,$longitudMaxima);
-        $this->validador->rule('alpha', $campo);
+    public function validateAlfa($campo,$requerido,$longitudMinima,$longitudMaxima){
+        $this->validateRequired($campo,$requerido);
+        $this->validator->rule('lengthBetween',$campo, $longitudMinima,$longitudMaxima);
+        $this->validator->rule('alpha', $campo);
     }
 
-    public function validarCorreoElectronico($campo,$requerido,$longitudMinima,$longitudMaxima,$expresionRegular=''){
-        $this->validarRequerido($campo,$requerido);
-        $this->validador->rule('lengthBetween',$campo, $longitudMinima,$longitudMaxima);
-        $this->validador->rule('email',$campo);
+    public function validateEmail($campo,$requerido,$longitudMinima,$longitudMaxima,$expresionRegular=''){
+        $this->validateRequired($campo,$requerido);
+        $this->validator->rule('lengthBetween',$campo, $longitudMinima,$longitudMaxima);
+        $this->validator->rule('email',$campo);
         if(!empty($expresionRegular)){
-            $this->validador->rule('regex',$campo,$expresionRegular);
+            $this->validator->rule('regex',$campo,$expresionRegular);
         }
     }
 
-    public function validarNumeroEntero($campo,$requerido,$valorMinimo,$valorMaximo){
-        $this->validarRequerido($campo,$requerido);
-        $this->validador->rule("integer",$campo);
-        $this->validador->rule('between', $campo, array($valorMinimo, $valorMaximo));
+    public function validateIntegerNumber($campo,$requerido,$valorMinimo,$valorMaximo){
+        $this->validateRequired($campo,$requerido);
+        $this->validator->rule("integer",$campo);
+        $this->validator->rule('between', $campo, array($valorMinimo, $valorMaximo));
     }
 
-    public function validarNumero($campo,$requerido,$valorMinimo,$valorMaximo){
-        $this->validarRequerido($campo,$requerido);
-        $this->validador->rule("numeric",$campo);
-        $this->validador->rule('between', $campo, array($valorMinimo, $valorMaximo));
+    public function validateNumber($campo,$requerido,$valorMinimo,$valorMaximo){
+        $this->validateRequired($campo,$requerido);
+        $this->validator->rule("numeric",$campo);
+        $this->validator->rule('between', $campo, array($valorMinimo, $valorMaximo));
     }
 
-    public function validarNumeroId($campo,$requerido,$valorMinimo=1){
-        $this->validarRequerido($campo,$requerido);
-        $this->validador->rule("numeric",$campo);
-        $this->validador->rule('min', $campo,$valorMinimo);
+    public function validateIdNumber($campo,$requerido,$valorMinimo=1){
+        $this->validateRequired($campo,$requerido);
+        $this->validator->rule("numeric",$campo);
+        $this->validator->rule('min', $campo,$valorMinimo);
     }
 
-    private function validarRequerido($campo,$requerido){
+    private function validateRequired($campo, $requerido){
         if($requerido){
-            $this->validador->rule("required",$campo);
+            $this->validator->rule("required",$campo);
         }
     }
 
-    public function validarArregloSimple($requerido,$label){
+    public function validateArregloSimple($requerido,$label){
         if($requerido){
-            $this->validador->addRule('arregloRequerido', function($arreglo) {
+            $this->validator->addRule('arregloRequerido', function($arreglo) {
                 if(is_empty($arreglo)){
                     return true;
                 }else{
                     return false;
                 }
             })->message("El campo $label es requerido");
-            $this->validador->rule('arregloRequerido',$this->arreglo);
+            $this->validator->rule('arregloRequerido',$this->array);
         }
     }
 
-    public function validarEnumKey($campo,$clase){
-        if(!EnumUtil::buscarKey($clase,$this->arreglo[$campo])){
+    public function validateEnumKey($campo,$clase){
+        if(!EnumUtil::buscarKey($clase,$this->array[$campo])){
             $mensajes=array($campo=>"Valor no valido");
             ResponseMessage::errorMessages($mensajes);
         }
     }
 
-    public function validarEnumValue($campo,$clase){
-        if(!EnumUtil::buscarValue($clase,$this->arreglo[$campo])){
+    public function validateEnumValue($campo,$clase){
+        if(!EnumUtil::buscarValue($clase,$this->array[$campo])){
             $mensajes=array($campo=>array("Valor no valido"));
             ResponseMessage::errorMessages($mensajes);
         }
     }
 
     public function validate(){
-        return $this->validador->validate();
+        return $this->validator->validate();
     }
 
     public function getErrors(){
-        return $this->validador->errors();
+        return $this->validator->errors();
     }
 
-    public function agregarEtiquetas($etiquetas){
-        $this->validador->labels($etiquetas);
+    public function addLabels($labels){
+        $this->validator->labels($labels);
     }
 
 }
