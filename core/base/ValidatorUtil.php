@@ -6,7 +6,7 @@
  * Date: 12/12/2019
  * Time: 06:09 PM
  */
-class ValidadorUtil{
+class ValidatorUtil{
 
     private $validator;
     private $array;
