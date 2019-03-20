@@ -108,8 +108,9 @@ $f3->route('POST /error','ErrorController->indexJSON');
 */
 use Valitron\Validator as V;
 
-V::langDir(__DIR__.'/core/lib/Valitron/lang'); // always set langDir before lang.
+V::langDir(__DIR__.'/vendor/vlucas/valitron/lang/'); // always set langDir before lang.
 V::lang('es');
+
 
 /*
     |--------------------------------------------------------------------------
