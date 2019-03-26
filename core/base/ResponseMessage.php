@@ -13,13 +13,13 @@ class ResponseMessage{
    header('Content-type: application/json');
    exit();
   } 
-  static function messageAddtionalData($message,$addtionalData,$messageType="OK",$status=200){
+  static function messageAdditionalData($message,$additionalData,$messageType="OK",$status=200){
    $data = array();
    $data['status'] = $status;
    $data['message']=$message;  
    $data['responseType']='MESSAGE';
    $data['messageType']=$messageType;
-   $data["addtionalData"]=$addtionalData;
+   $data["additionalData"]=$additionalData;
    echo json_encode($data);
    header('Content-type: application/json');
    exit();
@@ -86,13 +86,13 @@ class ResponseMessage{
    }
   }
 
-    static function jsonData($addtionalData,$messageType="OK",$status=200){
+    static function jsonData($additionalData,$messageType="OK",$status=200){
         $data = array();
         $data['status'] = $status;
         $data['message']="";
         $data['responseType']='MESSAGE';
         $data['messageType']=$messageType;
-        $data["addtionalData"]=$addtionalData;
+        $data["additionalData"]=$additionalData;
         echo json_encode($data);
         header('Content-type: application/json');
         exit();
