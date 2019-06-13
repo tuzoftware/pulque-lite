@@ -91,7 +91,7 @@ class Repository
         return $exist;
     }
 
-    public function existUpdateSaveFieldName ($tableName, $array, $fieldName, $idName){
+    public function existUpdateFieldUnique ($tableName, $array, $fieldName, $idName){
         $object=new DB\SQL\Mapper($this->db,$tableName);
         $exist=false;
         if(empty($array[$idName])){
