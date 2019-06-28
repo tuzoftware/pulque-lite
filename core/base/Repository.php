@@ -16,6 +16,7 @@ class Repository
     {
         $f3 = \Base::instance();
         $this->db =$f3->get($db);
+        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->filters=array();
     }
 
