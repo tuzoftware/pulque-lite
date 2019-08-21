@@ -29,7 +29,7 @@ date_default_timezone_set('America/Mexico_City');
     |--------------------------------------------------------------------------
 */
 
-$f3->set('AUTOLOAD',"core/lib/AutoLoad/;core/lib/F3Access/;core/base/;
+$f3->set('AUTOLOAD',"core/lib/Autoload/;core/lib/F3Access/;core/base/;
 core/lib/error/;core/lib/;");
 $autoLoad = new AutoLoad();
 $autoLoad->autoLoadClasses('app');
@@ -100,7 +100,7 @@ $f3->route('POST /error','ErrorController->indexJSON');
     | DATABASE CONECTION
     |--------------------------------------------------------------------------
 */
-//$f3->set('DB',new DB\SQL('mysql:host='.$f3->get('localhost').';port='.$f3->get('port').';dbname='.$f3->get('dbname') ,$f3->get('user'),$f3->get('password')));
+//$f3->set('DB',new DB\SQL('mysql:host='.$f3->get('host').';port='.$f3->get('port').';dbname='.$f3->get('dbname') ,$f3->get('user'),$f3->get('password')));
 /*
     |--------------------------------------------------------------------------
     | V A L I T R O N
