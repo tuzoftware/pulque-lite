@@ -52,7 +52,7 @@ class Repository
         return $object[$fieldNameToReturn];
     }
 
-    public function deleteInstanceByIdValue($tableName, $idName, $value){
+    public function delete($tableName, $idName, $value){
         $object=new DB\SQL\Mapper($this->db,$tableName);
         $object->load(array($idName.'=?',$value));
         $object->erase();
