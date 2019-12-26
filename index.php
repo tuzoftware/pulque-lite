@@ -12,7 +12,7 @@ $f3 = \Base::instance();
 $f3->set('ENCODING','UTF-8');
 $f3->set('DEBUG',1);
 if ((float)PCRE_VERSION<7.9)
-	trigger_error('PCRE version is out of date');
+    trigger_error('PCRE version is out of date');
 
 /*
     |--------------------------------------------------------------------------
@@ -39,27 +39,27 @@ $autoLoad->autoLoadClasses('app');
     |--------------------------------------------------------------------------
 */
 
-$loader = new Twig_Loader_Filesystem($autoLoad->autoLoadTwig('ui/modules'));
-
-$twig = new Twig_Environment($loader, array(
+$loader=new \Twig\Loader\FilesystemLoader($autoLoad->autoLoadTwig('ui/modules'));
+$twig = new \Twig\Environment($loader, array(
     'cache' => 'tmp',
     'debug' => true,
     'auto_reload' => true
 ));
-$filter =new Twig_Filter('f3','F3::get');
+
+$filter=new \Twig\TwigFilter('f3','F3::get');
 $twig->addFilter($filter);
 $twig->addGlobal('is_ajax',$f3->get('AJAX'));
 $twig->addGlobal("base", $f3->get('BASE'));
 $twig->addGlobal("debug", $f3->get('DEBUG'));
-$securityFunction = new Twig_SimpleFunction('hasSomeRol', function ($rol) {
+$securityFunction = new \Twig\TwigFunction('hasSomeRol', function ($rol) {
     return Security::hasSomeRol($rol);
 });
 $twig->addFunction($securityFunction);
-$sessionFunction = new Twig_SimpleFunction('session', function ($key) {
+$sessionFunction = new \Twig\TwigFunction('session', function ($key) {
     return $_SESSION[$key];
 });
 $twig->addFunction($sessionFunction);
-$lexer = new Twig_Lexer($twig, array(
+$lexer = new \Twig\Lexer($twig, array(
     'tag_comment'   => array('[#', '#]'),
     'tag_block'     => array('[%', '%]'),
     'tag_variable'  => array('[[', ']]'),

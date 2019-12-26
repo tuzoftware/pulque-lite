@@ -5,8 +5,8 @@
 	"license": "GPL-3.0",
 	"require": {
 		"php": ">=5.4",
-		"twig/twig": "2.5",
-		"vlucas/valitron":"1.4.3"
+		"twig/twig": "^3.0",
+		"vlucas/valitron":"1.4.7"
 	},
 	"repositories": [
 		{
