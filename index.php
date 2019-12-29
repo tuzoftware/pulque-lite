@@ -20,7 +20,12 @@ if ((float)PCRE_VERSION<7.9)
     |--------------------------------------------------------------------------
 */
 $f3->config('config.ini');
-$f3->config('datasource.ini');
+if(empty($f3->get('MODE')) || $f3->get('MODE')=='DEV'){
+$f3->config('datasource-dev.ini');  
+}else{
+$f3->config('datasource-prod.ini');	
+}
+
 date_default_timezone_set('America/Mexico_City');
 
 /*
